@@ -106,7 +106,7 @@ export default function PaginaInicial() {
   
               <TextField
                 fullWidth
-                placeholder='Digite algo...'
+                placeholder='Usuário'
                 textFieldColors={{
                   neutral: {
                     textColor: appConfig.theme.colors.neutrals[200],
