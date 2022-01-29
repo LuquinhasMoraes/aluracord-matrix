@@ -20,7 +20,6 @@ function Titulo(props){
 }
 
 export default function PaginaInicial() {
-    // let username = 'luquinhasmoraes';
 
     const [username, setUsername] = React.useState('luquinhasmoraes')
     const roteamento = useRouter()
@@ -68,8 +67,8 @@ export default function PaginaInicial() {
                   borderRadius: '50%',
                   marginBottom: '16px',
                 }}
-                onError={function (event) {
-                  event.target.src = defaultImage
+                onError={function (objetoDaImagem) {
+                  objetoDaImagem.target.src = appConfig.userImageDefault
                 }}
                 src={ username.length > 2 ? `https://github.com/${username}.png` : defaultImage}
               />
@@ -91,7 +90,7 @@ export default function PaginaInicial() {
               as="form"
               onSubmit={ function (event) {
                 event.preventDefault();
-                roteamento.push('/chat')
+                roteamento.push('/chat?user=' + username)
               }}
               styleSheet={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',

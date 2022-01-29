@@ -16,6 +16,10 @@ function GlobalStyle() {
           display: flex;
           flex: 1;
         }
+        a {
+          color: white;
+          text-decoration: none;
+        }
         #__next {
           flex: 1;
         }

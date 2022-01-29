@@ -1,11 +1,31 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
-import React from 'react';
+import { BiSend } from 'react-icons/bi';
+import { FaShareSquare, FaSpider } from 'react-icons/fa';
+import { RiDeleteBinLine } from 'react-icons/ri';
+import { useRouter } from 'next/router';
+import React, { useState } from 'react';
 import appConfig from '../config.json';
+import Link from 'next/link';
 
 export default function ChatPage() {
-    // Sua lógica vai aqui
+    const [message, setMessage] = useState()
+    const [messages, setMessages] = useState([])
+    const route = useRouter()
+    const userLogged = route.query.user
+    
+    const sendMessage = (textMessage) => {
+        const message = {
+            id: messages.length + 1,
+            from: userLogged, 
+            textMessage: textMessage,
+        }
+        setMessages([
+            ...messages,
+            message
+        ])
+        setMessage('')
+    }
 
-    // ./Sua lógica vai aqui
     return (
         <Box
             styleSheet={{
@@ -29,7 +49,7 @@ export default function ChatPage() {
                     padding: '32px',
                 }}
             >
-                <Header />
+                <Header userLogged={userLogged} />
                 <Box
                     styleSheet={{
                         position: 'relative',
@@ -39,11 +59,10 @@ export default function ChatPage() {
                         flexDirection: 'column',
                         borderRadius: '5px',
                         padding: '16px',
-                    }}
-                >
+                    }}>
 
-                    {/* <MessageList mensagens={[]} /> */}
-
+                    <MessageList messages={messages} />
+                    
                     <Box
                         as="form"
                         styleSheet={{
@@ -54,6 +73,16 @@ export default function ChatPage() {
                         <TextField
                             placeholder="Insira sua mensagem aqui..."
                             type="textarea"
+                            value={message}
+                            onChange={(event) => {
+                                setMessage(event.target.value)
+                            }}
+                            onKeyPress={(event) => {
+                                if(event.key === 'Enter') {
+                                    event.preventDefault()
+                                    sendMessage(message)
+                                }
+                            }}
                             styleSheet={{
                                 width: '100%',
                                 border: '0',
@@ -72,12 +101,12 @@ export default function ChatPage() {
     )
 }
 
-function Header() {
+function Header(props) {
     return (
         <>
             <Box styleSheet={{ width: '100%', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} >
                 <Text variant='heading5'>
-                    Chat
+                    Chat: {props.userLogged}
                 </Text>
                 <Button
                     variant='tertiary'
@@ -96,64 +125,112 @@ function Header() {
     )
 }
 
-function MessageList(props) {
-    console.log('MessageList', props);
+function MessageText({ message }) {
+    
     return (
-        <Box
-            tag="ul"
+        <Text
+            key={message.id}
+            tag="li"
             styleSheet={{
-                overflow: 'scroll',
-                display: 'flex',
-                flexDirection: 'column-reverse',
-                flex: 1,
-                color: appConfig.theme.colors.neutrals["000"],
-                marginBottom: '16px',
+                borderRadius: '5px',
+                padding: '6px',
+                marginBottom: '12px',
+                hover: {
+                    backgroundColor: appConfig.theme.colors.transparente.fundo,
+                }
             }}
         >
-
-            <Text
-                key={mensagem.id}
-                tag="li"
+            <Box
                 styleSheet={{
-                    borderRadius: '5px',
-                    padding: '6px',
-                    marginBottom: '12px',
-                    hover: {
-                        backgroundColor: appConfig.theme.colors.neutrals[700],
-                    }
+                    marginBottom: '3px',
+                    width: '100%', 
+                    marginBottom: '16px', 
+                    display: 'flex'
                 }}
             >
-                <Box
-                    styleSheet={{
-                        marginBottom: '8px',
-                    }}
-                >
+                
+                <a href={`https://github.com/${message.from}`} target="_blank">
                     <Image
                         styleSheet={{
-                            width: '20px',
-                            height: '20px',
+                            width: '35px',
+                            height: '35px',
                             borderRadius: '50%',
                             display: 'inline-block',
                             marginRight: '8px',
                         }}
-                        src={`https://github.com/vanessametonini.png`}
-                    />
-                    <Text tag="strong">
-                        {mensagem.de}
-                    </Text>
-                    <Text
-                        styleSheet={{
-                            fontSize: '10px',
-                            marginLeft: '8px',
-                            color: appConfig.theme.colors.neutrals[300],
+                        onError={(event) => {
+                            event.target.src = appConfig.userImageDefault
                         }}
-                        tag="span"
-                    >
-                        {(new Date().toLocaleDateString())}
-                    </Text>
+                        src={`https://github.com/${message.from}.png`}
+                    />
+                </a>
+                
+                <Text tag="strong" styleSheet={{marginTop: '5px'}}>
+                    <a href={`https://github.com/${message.from}`} target="_blank">
+                        {message.from}
+                    </a>
+                </Text>
+            
+                <Text
+                    styleSheet={{
+                        fontSize: '10px',
+                        marginLeft: '8px',
+                        marginTop: '8px',
+                        color: appConfig.theme.colors.neutrals[300],
+                    }}
+                    tag="span"
+                >
+                    {(new Date().toLocaleDateString())}
+                </Text>
+                <Box
+                    title={`Apagar mensagem`}
+                    styleSheet={{
+                        padding: '2px 15px',
+                        cursor: 'pointer',
+                        right: '100px'
+                    }}
+                    onClick={()=>{
+                        let resposta = confirm('Deseja remover essa mensagem?')
+                        if(resposta === true){
+                                
+                        }
+                    }}
+                >
+                    {<RiDeleteBinLine />}
                 </Box>
-                {mensagem.texto}
-            </Text>
+            </Box>
+
+            
+
+            {message.textMessage}
+        </Text>
+    )
+}   
+
+function MessageList({messages}) {
+    return (
+        <Box
+            tag="ul"
+            styleSheet={{
+                overflowY: 'scroll',
+                wordBreak: 'break-word',
+                display: 'flex',
+                flexDirection: 'column-reverse',
+                flex: 1,
+                color: appConfig.theme.colors.neutrals["000"],
+                marginBottom: '1px'
+            }}
+        >
+
+            {
+                messages.map(message => {
+                    return (
+                        <MessageText key={message.id} message={message} />
+                    )
+                })
+            }
+
+            
         </Box>
     )
 }
