@@ -58,8 +58,13 @@ export default function ChatPage(props) {
             editRealtimeMessage((payload) => {
                 console.log(payload)
                 const newMessage = payload.new
+                const oldMessage = payload.old
                 switch (payload.eventType) {
                     case 'INSERT':
+                        if(newMessage.from !== userLogged) {
+                            const audio = new Audio('./sounds/newMessage.mp3')
+                            audio.play()
+                        }
                         setMessages((currentMessages) => (
                             [
                                 newMessage,
