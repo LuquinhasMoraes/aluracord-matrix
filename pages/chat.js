@@ -14,17 +14,18 @@ function getRealtimeMessages(sendMessage) {
     return supabaseClient
         .from('messages')
         .on('INSERT', payload => {
-            sendMessage(payload.new)
+            console.log(payload);
+            // sendMessage(payload.new)
         }).subscribe(event => {
             console.log(event);
         })
 }
 
-function editRealtimeMessage(editMessage) {
+function editRealtimeMessage(updateInRealTime) {
     return supabaseClient
         .from('messages')
-        .on('UPDATE', payload => {
-            editMessage(payload.new)
+        .on('*', payload => {
+            updateInRealTime(payload)
         }).subscribe(event => {
             console.log(event);
         })
@@ -41,7 +42,10 @@ export default function ChatPage(props) {
 
     useEffect(()=>{
 
-      
+        getRealtimeMessages((event) => {
+            console.log(event);
+            
+        })
 
         supabaseClient
             .from('messages')
@@ -51,30 +55,53 @@ export default function ChatPage(props) {
                 setMessages(data)
             });
 
-            getRealtimeMessages((event) => {
-                setMessages((currentMessages) => (
-                    [
-                        event,
-                        ...currentMessages
-                    ]
-                ))
-            })
-    
-            editRealtimeMessage((newMessage) => {
-                console.log(newMessage);
-                setMessages((currentMessages) => (
-                    [
-                        ...currentMessages.map(m => {
-                            return {
-                                ...m,
-                                textMessage: m.id === newMessage.id ? newMessage.textMessage : m.textMessage
-                            }
-                        })
-                    ]
-                ))
+            editRealtimeMessage((payload) => {
+                console.log(payload)
+                const newMessage = payload.new
+                switch (payload.eventType) {
+                    case 'INSERT':
+                        setMessages((currentMessages) => (
+                            [
+                                newMessage,
+                                ...currentMessages
+                            ]
+                        ))
+                        break;
+                    case 'UPDATE':
+                            setMessages((currentMessages) => (
+                                [
+                                    ...currentMessages.map(m => {
+                                        return {
+                                            ...m,
+                                            textMessage: m.id === newMessage.id ? newMessage.textMessage : m.textMessage
+                                        }
+                                    })
+                                ]
+                            ))
+                        break;                
+                    default:
+                        break;
+                }
+                
 
                 // editMessageClient(newMessage.textMessage, newMessage.id)
             })
+    
+            // editRealtimeMessage((newMessage) => {
+            //     console.log(newMessage);
+            //     setMessages((currentMessages) => (
+            //         [
+            //             ...currentMessages.map(m => {
+            //                 return {
+            //                     ...m,
+            //                     textMessage: m.id === newMessage.id ? newMessage.textMessage : m.textMessage
+            //                 }
+            //             })
+            //         ]
+            //     ))
+
+            //     // editMessageClient(newMessage.textMessage, newMessage.id)
+            // })
 
     }, []);
 
@@ -97,10 +124,10 @@ export default function ChatPage(props) {
             ])
             .then(( {data})=>{
                 console.log('Criando Mensagem: ', data);
-                setMessages([
-                    data[0],
-                    ...messages,
-                ]);
+                // setMessages([
+                //     data[0],
+                //     ...messages,
+                // ]);
             })   
         setMessage('')
     }
