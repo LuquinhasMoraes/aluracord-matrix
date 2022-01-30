@@ -172,7 +172,7 @@ export default function ChatPage(props) {
         return (
             <Box
                 tag="ul"
-                key="editor1"
+                id="main-box"
                 styleSheet={{
                     overflowY: 'scroll',
                     wordBreak: 'break-word',
@@ -405,13 +405,49 @@ export default function ChatPage(props) {
                             }}
                             styleSheet={{
                                 width: '100%',
-                                border: '0',
+                                // border: '0',
                                 resize: 'none',
                                 borderRadius: '5px',
                                 padding: '6px 8px',
                                 backgroundColor: appConfig.theme.colors.transparente.fundo,
                                 marginRight: '12px',
                                 color: appConfig.theme.colors.neutrals[200],
+                                focus: {
+                                    borderColor: appConfig.theme.colors.neutrals[400],
+                                },
+                                hover: {
+                                    borderColor: appConfig.theme.colors.neutrals[400],
+                                }
+                            }}
+                        />
+
+                        <Button
+                            variant='tertiary'
+                            label={<BiSend />}
+                            type='submit'
+                            styleSheet={{
+                                borderRadius: '5px',
+                                minWidth: '46px',
+                                minHeight: '46px',
+                                marginBottom: '14px',
+                                marginTop: '5px',
+                                backgroundColor: appConfig.theme.colors.primary[600],
+                                marginLeft: '5px',
+                                color: appConfig.theme.colors.neutrals[200],
+                                hover:{
+                                    backgroundColor: appConfig.theme.colors.transparente.buttonRed,
+                                },
+                                focus:{
+                                    backgroundColor: appConfig.theme.colors.primary[600],
+                                }
+                            }}
+                          
+                            onClick={(event) => {
+                                event.preventDefault();
+                                if (textMessage.length > 0) {
+                                    event.preventDefault()
+                                    sendMessage(createMessage(textMessage))
+                                }
                             }}
                         />
                     </Box>
@@ -434,10 +470,16 @@ export default function ChatPage(props) {
                         styleSheet={{
                             borderRadius: '5px',
                             padding: '6px 8px',
-                            backgroundColor: appConfig.theme.colors.transparente.buttonBlack,
-                            marginRight: '30px',
+                            backgroundColor: appConfig.theme.colors.primary[900],
+                            marginRight: '10px',
                             color: appConfig.theme.colors.neutrals[200],
                         }}
+                        buttonColors={{
+                            contrastColor: appConfig.theme.colors.neutrals["000"],
+                            mainColor: appConfig.theme.colors.primary[900],
+                            mainColorLight: appConfig.theme.colors.primary[400],
+                            mainColorStrong: appConfig.theme.colors.primary[600],
+                          }}
                     />
                 </Box>
             </>
