@@ -254,17 +254,15 @@ export default function ChatPage(props) {
                                                 right: '100px'
                                             }}
                                             onClick={()=>{
-                                                let resposta = confirm('Deseja remover essa mensagem?')
-                                                if(resposta === true){
-                                                    supabaseClient
+                                                
+                                                supabaseClient
                                                     .from('messages')
                                                     .delete()
                                                     .match({ id: message.id }).then(() =>{
                                                         let index = messages.indexOf(message);
                                                         messages.splice(index, 1)
                                                         setMessages([...messages])
-                                                    })  
-                                                }
+                                                    })
                                             }}
                                         >
                                             {<RiDeleteBinLine />}
