@@ -76,16 +76,16 @@ export default function ChatPage(props) {
                         ))
                         break;
                     case 'UPDATE':
-                            setMessages((currentMessages) => (
-                                [
-                                    ...currentMessages.map(m => {
-                                        return {
-                                            ...m,
-                                            textMessage: m.id === newMessage.id ? newMessage.textMessage : m.textMessage
-                                        }
-                                    })
-                                ]
-                            ))
+                            // setMessages((currentMessages) => (
+                            //     [
+                            //         ...currentMessages.map(m => {
+                            //             return {
+                            //                 ...m,
+                            //                 textMessage: m.id === newMessage.id ? newMessage.textMessage : m.textMessage
+                            //             }
+                            //         })
+                            //     ]
+                            // ))
                         break;                
                     default:
                         break;
@@ -359,7 +359,7 @@ export default function ChatPage(props) {
                                     )
                                 
                                 }
-                                <Emojis />
+                                <Emojis supabaseClient={supabaseClient} message={message} userLogged={userLogged} />
                             </Text>
                             
                             </>
