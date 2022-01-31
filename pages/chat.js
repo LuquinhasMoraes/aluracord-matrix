@@ -1,12 +1,14 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import { BiSend, BiEdit } from 'react-icons/bi';
 import { FaShareSquare, FaSpider } from 'react-icons/fa';
+import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import appConfig from '../config.json';
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
+import { ButtonSendSticker } from '../src/components/ButtonSendSticker';
 
 const supabaseClient = createClient('https://bfomzoczejfqvfooluii.supabase.co', process.env.PRIVATE_KEY)
 
@@ -239,8 +241,10 @@ export default function ChatPage(props) {
                                         }}
                                         tag="span"
                                     >
-                                        {(new Date().toLocaleDateString())} {message.updated_at != null ? `Editado às ${new Date(message.updated_at).toLocaleTimeString()}` : null}
+                                        {(new Date(message.created_at).toLocaleDateString()) + ' às ' + new Date(message.created_at).toLocaleTimeString()} {message.updated_at != null ? `- Editado às ${new Date(message.updated_at).toLocaleTimeString()}` : null}
                                     </Text>
+
+                                    
 
                                     {
                                         message.from === userLogged ?
@@ -300,6 +304,28 @@ export default function ChatPage(props) {
 
                                     }
 
+                                        <Box
+                                            title={`Likes: ` + 21}
+                                            styleSheet={{
+                                                padding: '2px 15px',
+                                                cursor: 'pointer',
+                                                right: '100px'
+                                            }}
+                                            onClick={()=>{
+                                                
+                                                // supabaseClient
+                                                //     .from('messages')
+                                                //     .delete()
+                                                //     .match({ id: message.id }).then(() =>{
+                                                //         let index = messages.indexOf(message);
+                                                //         messages.splice(index, 1)
+                                                //         setMessages([...messages])
+                                                //     })
+                                            }}
+                                        >
+                                            {<AiOutlineHeart />}
+                                    </Box>
+
                                     
 
                                 </Box>
@@ -333,10 +359,26 @@ export default function ChatPage(props) {
                                             }}
                                         />
                                         :
-                                        message.textMessage
+                                        null
                                 }
+                                {
+                                message.textMessage.startsWith(':sticker:') ? 
+                                (
+                                        <Image src={message.textMessage.replace(':sticker:', '')}
+                                        styleSheet={{
+                                            width: '150px',
+                                        }}
+                                        />
+                                    ) : (
+                                        message.textMessage
+                                )
+                                }
+
                             </Text>
+
+                            
                         )
+                        
                     })
                 }
     
@@ -417,6 +459,12 @@ export default function ChatPage(props) {
                                 hover: {
                                     borderColor: appConfig.theme.colors.neutrals[400],
                                 }
+                            }}
+                        />
+
+                        <ButtonSendSticker 
+                            onStickerClick={(sticker) => {
+                                sendMessage(createMessage(':sticker: ' + sticker))
                             }}
                         />
 
