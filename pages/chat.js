@@ -159,7 +159,7 @@ export default function ChatPage(props) {
     const editMessage = (newMessage, id) => {
         supabaseClient
             .from('messages')
-            .update({ textMessage: newMessage })
+            .update({ textMessage: newMessage, updated_at: new Date() })
             .match({ id: id }).then(res => {
                 editMessageClient(newMessage, id)
             })
@@ -239,7 +239,7 @@ export default function ChatPage(props) {
                                         }}
                                         tag="span"
                                     >
-                                        {(new Date().toLocaleDateString())}
+                                        {(new Date().toLocaleDateString())} {message.updated_at != null ? `Editado às ${new Date(message.updated_at).toLocaleTimeString()}` : null}
                                     </Text>
 
                                     {
@@ -280,6 +280,7 @@ export default function ChatPage(props) {
                                                     if (m.id === message.id) {
                                                         return {
                                                             ...m,
+                                                            updated_at: new Date(),
                                                             isEditing: true
                                                         }
                                                     } else {
