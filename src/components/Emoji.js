@@ -18,7 +18,7 @@ export default function Emojis({supabaseClient, message, userLogged}) {
     }
 
     const botesEmoji = Object.entries(emojis).map(([nome, emoji]) => {
-
+        console.log();
         return (
 
             <Button key={nome}
@@ -26,6 +26,7 @@ export default function Emojis({supabaseClient, message, userLogged}) {
                 variant='secondary'
                 colorVariant='light'
                 rounded='md'
+                title={message.like.curti.map(l => l.from).join(', ')}
                 styleSheet={{ 
                     margin: '5px',
                     marginTop: '15px',
