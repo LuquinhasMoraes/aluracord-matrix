@@ -9,6 +9,7 @@ import appConfig from '../config.json';
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 import { ButtonSendSticker } from '../src/components/ButtonSendSticker';
+import Emojis from '../src/components/Emoji';
 
 const supabaseClient = createClient('https://bfomzoczejfqvfooluii.supabase.co', process.env.PRIVATE_KEY)
 
@@ -89,26 +90,7 @@ export default function ChatPage(props) {
                     default:
                         break;
                 }
-                
-
-                // editMessageClient(newMessage.textMessage, newMessage.id)
             })
-    
-            // editRealtimeMessage((newMessage) => {
-            //     console.log(newMessage);
-            //     setMessages((currentMessages) => (
-            //         [
-            //             ...currentMessages.map(m => {
-            //                 return {
-            //                     ...m,
-            //                     textMessage: m.id === newMessage.id ? newMessage.textMessage : m.textMessage
-            //                 }
-            //             })
-            //         ]
-            //     ))
-
-            //     // editMessageClient(newMessage.textMessage, newMessage.id)
-            // })
 
     }, []);
 
@@ -131,10 +113,6 @@ export default function ChatPage(props) {
             ])
             .then(( {data})=>{
                 console.log('Criando Mensagem: ', data);
-                // setMessages([
-                //     data[0],
-                //     ...messages,
-                // ]);
             })   
         setMessage('')
     }
@@ -189,12 +167,13 @@ export default function ChatPage(props) {
                 {
                     messages.map((message, key) => {
                         return (
+                            <>
                             <Text
                                 key={message.id}
                                 tag="li"
                                 styleSheet={{
                                     borderRadius: '5px',
-                                    padding: '6px',
+                                    padding: '10px',
                                     marginBottom: '12px',
                                     hover: {
                                         backgroundColor: appConfig.theme.colors.transparente.fundo,
@@ -307,24 +286,29 @@ export default function ChatPage(props) {
                                         <Box
                                             title={`Likes: ` + 21}
                                             styleSheet={{
-                                                padding: '2px 15px',
+                                                padding: '0px 15px',
                                                 cursor: 'pointer',
-                                                right: '100px'
+                                                right: '100px',
+                                                marginTop: '-5px'
                                             }}
-                                            onClick={()=>{
+                                            // onClick={()=>{
                                                 
-                                                // supabaseClient
-                                                //     .from('messages')
-                                                //     .delete()
-                                                //     .match({ id: message.id }).then(() =>{
-                                                //         let index = messages.indexOf(message);
-                                                //         messages.splice(index, 1)
-                                                //         setMessages([...messages])
-                                                //     })
-                                            }}
+                                            //     supabaseClient
+                                            //         .from('messages')
+                                            //         .update({likes: message.likes + 1})
+                                            //         .match({ id: message.id }).then(() =>{
+                                            //             // setMessages([...messages.map(m => {
+                                            //             //     return {
+                                            //             //         ...m,
+                                            //             //         likes: m.id === message.id ? m.likes + 1 : m.likes
+                                            //             //     }
+                                            //             // })])
+                                            //         })
+                                            // }}
                                         >
-                                            {<AiOutlineHeart />}
+                                        
                                     </Box>
+
 
                                     
 
@@ -363,25 +347,34 @@ export default function ChatPage(props) {
                                 }
                                 {
                                 message.textMessage.startsWith(':sticker:') ? 
-                                (
+                                    (
                                         <Image src={message.textMessage.replace(':sticker:', '')}
                                         styleSheet={{
                                             width: '150px',
                                         }}
                                         />
-                                    ) : (
+                                    ) : 
+                                    (
                                         message.textMessage
-                                )
+                                    )
+                                
                                 }
-
+                                <Emojis />
                             </Text>
+                            
+                            </>
 
                             
                         )
+
+                        
                         
                     })
+                    
                 }
     
+ 
+ 
                 
             </Box>
         )
