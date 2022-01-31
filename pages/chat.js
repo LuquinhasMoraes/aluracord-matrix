@@ -10,19 +10,10 @@ import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 import { ButtonSendSticker } from '../src/components/ButtonSendSticker';
 import Emojis from '../src/components/Emoji';
+import MessageItem from '../src/components/MessageItem';
+import TextFieldSend from '../src/components/TextFieldSend';
 
 const supabaseClient = createClient('https://bfomzoczejfqvfooluii.supabase.co', process.env.PRIVATE_KEY)
-
-function getRealtimeMessages(sendMessage) {
-    return supabaseClient
-        .from('messages')
-        .on('INSERT', payload => {
-            console.log(payload);
-            // sendMessage(payload.new)
-        }).subscribe(event => {
-            console.log(event);
-        })
-}
 
 function editRealtimeMessage(updateInRealTime) {
     return supabaseClient
@@ -34,25 +25,18 @@ function editRealtimeMessage(updateInRealTime) {
         })
 }
 
-
 export default function ChatPage(props) {
 
-    const [textMessage, setMessage] = useState()
-    const [messageEdit, setMessageEdit] = useState()
     const [messages, setMessages] = useState([])
     const route = useRouter()
     const userLogged = route.query.user
 
     useEffect(()=>{
 
-        getRealtimeMessages((event) => {
-            console.log(event);
-            
-        })
-
         supabaseClient
             .from('messages')
             .select('*')
+            .match({deleted: false})
             .order('id', { ascending: false})
             .then(( {data})=>{
                 setMessages(data)
@@ -61,7 +45,6 @@ export default function ChatPage(props) {
             editRealtimeMessage((payload) => {
                 console.log(payload)
                 const newMessage = payload.new
-                const oldMessage = payload.old
                 switch (payload.eventType) {
                     case 'INSERT':
                         if(newMessage.from !== userLogged) {
@@ -94,29 +77,6 @@ export default function ChatPage(props) {
 
     }, []);
 
-    function createMessage(textMessage) {
-        const message = {
-            from: userLogged, 
-            textMessage: textMessage,
-            updated_at: null
-        }
-        return message
-    }
-    
-    function sendMessage(message) {
-        
-        console.log(message);
-        supabaseClient
-            .from('messages')
-            .insert([
-                message
-            ])
-            .then(( {data})=>{
-                console.log('Criando Mensagem: ', data);
-            })   
-        setMessage('')
-    }
-
     function editMessageClient(newMessage, id) {
         console.log(newMessage, id, messages);
         const editedMessages = messages.map(m => {
@@ -146,6 +106,23 @@ export default function ChatPage(props) {
                     
     }
 
+    const handleOnClickEditMessage = (message) => {
+        const editedMessages = messages.map(m => {
+            if (m.id === message.id) {
+                return {
+                    ...m,
+                    updated_at: new Date(),
+                    isEditing: true
+                }
+            } else {
+                return {
+                    ...m
+                }
+            }
+        })
+        setMessages(editedMessages)
+    }
+
     
 
     const MessageList = ({messages}) => {
@@ -165,217 +142,16 @@ export default function ChatPage(props) {
             >
     
                 {
-                    messages.map((message, key) => {
+                    messages.filter(message => !message.deleted).map((message) => {
                         return (
-                            <>
-                            <Text
+                            <MessageItem 
                                 key={message.id}
-                                tag="li"
-                                styleSheet={{
-                                    borderRadius: '5px',
-                                    padding: '10px',
-                                    marginBottom: '12px',
-                                    hover: {
-                                        backgroundColor: appConfig.theme.colors.transparente.fundo,
-                                    }
-                                }}
-                            >
-                                <Box
-                                    styleSheet={{
-                                        marginBottom: '3px',
-                                        width: '100%', 
-                                        marginBottom: '16px', 
-                                        display: 'flex'
-                                    }}
-                                >
-                                    
-                                    <a href={`https://github.com/${message.from}`} target="_blank">
-                                        <Image
-                                            styleSheet={{
-                                                width: '35px',
-                                                height: '35px',
-                                                borderRadius: '50%',
-                                                display: 'inline-block',
-                                                marginRight: '8px',
-                                            }}
-                                            onError={(event) => {
-                                                event.target.src = appConfig.userImageDefault
-                                            }}
-                                            src={`https://github.com/${message.from}.png`}
-                                        />
-                                    </a>
-                                    
-                                    <Text tag="strong" styleSheet={{marginTop: '5px'}}>
-                                        <a href={`https://github.com/${message.from}`} target="_blank">
-                                            {message.from}
-                                        </a>
-                                    </Text>
-                                
-                                    <Text
-                                        styleSheet={{
-                                            fontSize: '10px',
-                                            marginLeft: '8px',
-                                            marginTop: '8px',
-                                            color: appConfig.theme.colors.neutrals[300],
-                                        }}
-                                        tag="span"
-                                    >
-                                        {(new Date(message.created_at).toLocaleDateString()) + ' às ' + new Date(message.created_at).toLocaleTimeString()} {message.updated_at != null ? `- Editado às ${new Date(message.updated_at).toLocaleTimeString()}` : null}
-                                    </Text>
-
-                                    
-
-                                    {
-                                        message.from === userLogged ?
-
-                                        <>
-                                            <Box
-                                            title={`Apagar mensagem`}
-                                            styleSheet={{
-                                                padding: '2px 15px',
-                                                cursor: 'pointer',
-                                                right: '100px'
-                                            }}
-                                            onClick={()=>{
-                                                
-                                                supabaseClient
-                                                    .from('messages')
-                                                    .delete()
-                                                    .match({ id: message.id }).then(() =>{
-                                                        let index = messages.indexOf(message);
-                                                        messages.splice(index, 1)
-                                                        setMessages([...messages])
-                                                    })
-                                            }}
-                                        >
-                                            {<RiDeleteBinLine />}
-                                        </Box>
-
-                                        <Box
-                                            title={`Editar mensagem`}
-                                            styleSheet={{
-                                                padding: '2px 0px',
-                                                cursor: 'pointer',
-                                                right: '10px'
-                                            }}
-                                            onClick={()=>{
-                                                const editedMessages = messages.map(m => {
-                                                    if (m.id === message.id) {
-                                                        return {
-                                                            ...m,
-                                                            updated_at: new Date(),
-                                                            isEditing: true
-                                                        }
-                                                    } else {
-                                                        return {
-                                                            ...m
-                                                        }
-                                                    }
-                                                })
-                                                setMessageEdit(message.textMessage)
-                                                setMessages(editedMessages)
-                                            }}
-                                        >
-                                            {<BiEdit />}
-                                        </Box>
-                                        </>
-                                        : null
-
-                                    }
-
-                                        <Box
-                                            title={`Likes: ` + 21}
-                                            styleSheet={{
-                                                padding: '0px 15px',
-                                                cursor: 'pointer',
-                                                right: '100px',
-                                                marginTop: '-5px'
-                                            }}
-                                            // onClick={()=>{
-                                                
-                                            //     supabaseClient
-                                            //         .from('messages')
-                                            //         .update({likes: message.likes + 1})
-                                            //         .match({ id: message.id }).then(() =>{
-                                            //             // setMessages([...messages.map(m => {
-                                            //             //     return {
-                                            //             //         ...m,
-                                            //             //         likes: m.id === message.id ? m.likes + 1 : m.likes
-                                            //             //     }
-                                            //             // })])
-                                            //         })
-                                            // }}
-                                        >
-                                        
-                                    </Box>
-
-
-                                    
-
-                                </Box>
-
-                                
-                                {
-                                    message.isEditing ?
-                                        <TextField
-                                            key={'edinting' + message.id}
-                                            placeholder="Edite sua mensagem"
-                                            value={messageEdit}
-                                            autoFocus="autoFocus"
-                                            onChange={(event) => {
-                                                setMessageEdit(event.target.value)
-                                            }}
-                                            onKeyPress={(event) => {
-                                                if(event.key === 'Enter') {
-                                                    event.preventDefault()
-                                                    editMessage(messageEdit, message.id)
-                                                }
-                                            }}
-                                            styleSheet={{
-                                                width: '100%',
-                                                border: '0',
-                                                resize: 'none',
-                                                borderRadius: '5px',
-                                                padding: '6px 8px',
-                                                backgroundColor: appConfig.theme.colors.transparente.fundo,
-                                                marginRight: '12px',
-                                                color: appConfig.theme.colors.neutrals[200],
-                                            }}
-                                        />
-                                        :
-                                        null
-                                }
-                                {
-                                message.textMessage.startsWith(':sticker:') ? 
-                                    (
-                                        <Image src={message.textMessage.replace(':sticker:', '')}
-                                        styleSheet={{
-                                            width: '150px',
-                                        }}
-                                        />
-                                    ) : 
-                                    (
-                                        message.textMessage
-                                    )
-                                
-                                }
-                                <Emojis supabaseClient={supabaseClient} message={message} userLogged={userLogged} />
-                            </Text>
-                            
-                            </>
-
-                            
+                                supabaseClient={supabaseClient} 
+                                messageItem={message} 
+                                userLogged={userLogged} />
                         )
-
-                        
-                        
                     })
-                    
                 }
-    
- 
- 
-                
             </Box>
         )
     }
@@ -416,81 +192,9 @@ export default function ChatPage(props) {
                     }}>
 
                     <MessageList messages={messages} />
-                    
-                    <Box
-                        as="form"
-                        styleSheet={{
-                            display: 'flex',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <TextField
-                            placeholder="Insira sua mensagem aqui..."
-                            type="textarea"
-                            value={textMessage}
-                            onChange={(event) => {
-                                setMessage(event.target.value)
-                            }}
-                            onKeyPress={(event) => {
-                                if(event.key === 'Enter') {
-                                    event.preventDefault()
-                                    sendMessage(createMessage(textMessage))
-                                }
-                            }}
-                            styleSheet={{
-                                width: '100%',
-                                // border: '0',
-                                resize: 'none',
-                                borderRadius: '5px',
-                                padding: '6px 8px',
-                                backgroundColor: appConfig.theme.colors.transparente.fundo,
-                                marginRight: '12px',
-                                color: appConfig.theme.colors.neutrals[200],
-                                focus: {
-                                    borderColor: appConfig.theme.colors.neutrals[400],
-                                },
-                                hover: {
-                                    borderColor: appConfig.theme.colors.neutrals[400],
-                                }
-                            }}
-                        />
 
-                        <ButtonSendSticker 
-                            onStickerClick={(sticker) => {
-                                sendMessage(createMessage(':sticker: ' + sticker))
-                            }}
-                        />
+                    <TextFieldSend userLogged={userLogged} supabaseClient={supabaseClient} />
 
-                        <Button
-                            variant='tertiary'
-                            label={<BiSend />}
-                            type='submit'
-                            styleSheet={{
-                                borderRadius: '5px',
-                                minWidth: '46px',
-                                minHeight: '46px',
-                                marginBottom: '14px',
-                                marginTop: '5px',
-                                backgroundColor: appConfig.theme.colors.primary[600],
-                                marginLeft: '5px',
-                                color: appConfig.theme.colors.neutrals[200],
-                                hover:{
-                                    backgroundColor: appConfig.theme.colors.transparente.buttonRed,
-                                },
-                                focus:{
-                                    backgroundColor: appConfig.theme.colors.primary[600],
-                                }
-                            }}
-                          
-                            onClick={(event) => {
-                                event.preventDefault();
-                                if (textMessage.length > 0) {
-                                    event.preventDefault()
-                                    sendMessage(createMessage(textMessage))
-                                }
-                            }}
-                        />
-                    </Box>
                 </Box>
             </Box>
         </Box>
