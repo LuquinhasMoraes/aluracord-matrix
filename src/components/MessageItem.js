@@ -1,7 +1,9 @@
 import { memo, useState } from "react";
 import appConfig from '../../config.json';
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
-import { BiSend, BiEdit } from 'react-icons/bi';
+import { BiSend, BiEdit, BiReply, BiReplyAll } from 'react-icons/bi';
+import { BsFillReplyFill } from 'react-icons/bs';
+
 import { RiDeleteBinLine } from 'react-icons/ri';
 
 import Emojis from './Emoji';
@@ -57,7 +59,7 @@ const MessageItem = memo(({supabaseClient, messageItem, userLogged}) => {
                             {message.from}
                         </a>
                     </Text>
-                
+                            <br />
                     <Text
                         styleSheet={{
                             fontSize: '10px',
@@ -115,8 +117,24 @@ const MessageItem = memo(({supabaseClient, messageItem, userLogged}) => {
                         >
                             {<BiEdit />}
                         </Box>
+
+                        
                         </>
-                        : null
+                        : 
+                            
+                        <Box
+                            title={`Responder para ${message.from}`}
+                            styleSheet={{
+                                padding: '2px 15px',
+                                cursor: 'pointer',
+                                right: '10px'
+                            }}
+                            onClick={()=>{
+                                setMessage((msg) => ({...msg, isReplying: true}))
+                            }}
+                        >
+                            {<BsFillReplyFill />}
+                        </Box>
 
                     }
                 </Box>

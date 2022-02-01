@@ -4,21 +4,35 @@ import appConfig from '../../config.json';
 
 
 export default function Emojis({supabaseClient, message, userLogged}) {
-    const [contador, setContador] = useState({ curti: 0, amei: message.like.curti.filter(l => l.liked).length, haha: 0, uau: 0, triste: 0, grr: 0, olha: 0 })
+    const initialStateAmei = message.like.amei.filter(l => l.liked).length
+    const initialStateCurti = message.like.curti.filter(l => l.liked).length
+    const initialStateHaha = message.like.haha.filter(l => l.liked).length
+    const initialStateUau = message.like.uau.filter(l => l.liked).length
+    const initialStateTriste = message.like.triste.filter(l => l.liked).length
+    const initialStateGrr = message.like.grr.filter(l => l.liked).length
+    const initialStateOlha = message.like.olha.filter(l => l.liked).length
+
+    const [contador, setContador] = useState({ 
+        curti: initialStateCurti, 
+        amei: initialStateAmei, 
+        haha: initialStateHaha, 
+        uau: initialStateUau, 
+        triste: initialStateTriste, 
+        grr: initialStateGrr, 
+        olha: initialStateOlha 
+    })
 
     const emojis = {
-
-        // curti: '👍',
+        curti: '👍',
         amei: '❤️',
-        // haha: '😄',
-        // uau: '😮',
-        // triste: '😢',
-        // grr: '😡',
-        // olha: '👀',
+        haha: '😄',
+        uau: '😮',
+        triste: '😢',
+        grr: '😡',
+        olha: '👀',
     }
 
     const botesEmoji = Object.entries(emojis).map(([nome, emoji]) => {
-        console.log();
         return (
 
             <Button key={nome}
@@ -26,9 +40,11 @@ export default function Emojis({supabaseClient, message, userLogged}) {
                 variant='secondary'
                 colorVariant='light'
                 rounded='md'
-                title={message.like.curti.map(l => l.from).join(', ')}
+                title={message.like[nome].map(l => l.from).join(', ')}
                 styleSheet={{ 
-                    margin: '5px',
+                    margin: '2px',
+                    paddingTop: '3px',
+                    paddingBottom: '3px',
                     marginTop: '15px',
                     borderColor: appConfig.theme.colors.primary[600],
                     hover: {
@@ -38,7 +54,7 @@ export default function Emojis({supabaseClient, message, userLogged}) {
                 label={`${emoji} : ${contador[nome]}`}
                 onClick={(evento) => {
                     evento.preventDefault()
-                    const likes = message.like.curti.filter(l => l.liked)
+                    const likes = message.like[nome].filter(l => l.liked)
                     const like = likes.find( l => l.from === userLogged)
 
                     if(like === undefined) {
@@ -48,17 +64,15 @@ export default function Emojis({supabaseClient, message, userLogged}) {
                         })
                     } else {
                         const index = likes.indexOf(like)
-                        console.log(index);
                         likes.splice(index, 1)
                     }
                     
                     supabaseClient
                     .from('messages')
-                    .update({like: {curti: likes}})
+                    .update({like: {...message.like, [nome]: likes}})
                     .match({ id: message.id }).then((event) =>{
-                        console.log(event);
                         contador[nome] = likes.length
-                        message.like = {curti: likes}
+                        message.like = {...message.like, [nome]: likes}
                         setContador({ ...contador })
                     })
                     

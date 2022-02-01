@@ -12,9 +12,10 @@ export function ButtonSendSticker(props) {
       }}
     >
       <Button
+        variant='tertiary'
         styleSheet={{
-          minWidth: '46px',
-          minHeight: '46px',
+          minWidth: '59px',
+          minHeight: '59px',
           fontSize: '20px',
           lineHeight: '0',
           display: 'flex',
@@ -22,12 +23,13 @@ export function ButtonSendSticker(props) {
           justifyContent: 'center',
           marginLeft: '5px',
           marginBottom: '7px',
-          backgroundColor: appConfig.theme.colors.transparente.buttonBlack,
-          filter: isOpen ? 'grayscale(0)' : 'grayscale(1)',
-          focus: {
-            backgroundColor: appConfig.theme.colors.transparente.buttonRed,
+          backgroundColor: appConfig.theme.colors.primary[600],
+          hover: {
+            backgroundColor: appConfig.theme.colors.primary[600]
+          },
+          focus:{
+            backgroundColor: appConfig.theme.colors.primary[600],
           }
-          
         }}
         label="😋"
         onClick={() => setOpenState(!isOpen)}
