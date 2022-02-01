@@ -132,11 +132,13 @@ export default function ChatPage(props) {
                     maxWidth: {
                         md: '70%',
                         sm: '95%',
+                        xs: '95%',
                     },
                     maxHeight: '95vh',
                     padding: {
                         md: '40px',
-                        sm: '25px',
+                        sm: '20px',
+                        xs: '20px',
                     },
                 }}
             >
