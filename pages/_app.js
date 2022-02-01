@@ -21,13 +21,13 @@ function GlobalStyle() {
         #box-panel-sticker::-webkit-scrollbar-track {
           -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
           border-radius: 10px;
-          background-color: #fff;
+          background-color: rgba(255, 255, 255, 0.5);
         }
         
         #box-panel-sticker::-webkit-scrollbar {
           width: 12px;
           border-radius: 10px;
-          background-color: #fff;
+          background-color: rgba(255, 255, 255, 0.5);
         }
         
         #box-panel-sticker::-webkit-scrollbar-thumb {
@@ -44,14 +44,12 @@ function GlobalStyle() {
         
         #main-box::-webkit-scrollbar-track {
           -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-          border-radius: 10px;
-          background-color: #fff;
+          border-radius: 10px;background-color: rgba(255, 255, 255, 0.50);
         }
         
         #main-box::-webkit-scrollbar {
           width: 12px;
-          border-radius: 10px;
-          background-color: #fff;
+          border-radius: 10px;background-color: rgba(255, 255, 255, 0.50);
         }
         
         #main-box::-webkit-scrollbar-thumb {

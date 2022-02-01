@@ -54,23 +54,25 @@ const MessageItem = memo(({supabaseClient, messageItem, userLogged}) => {
                         />
                     </a>
                     
-                    <Text tag="strong" styleSheet={{marginTop: '5px'}}>
+                    <Text tag="strong" styleSheet={{marginTop: '0px'}}>
                         <a href={`https://github.com/${message.from}`} target="_blank">
                             {message.from}
                         </a>
+
+                        <Text
+                            styleSheet={{
+                                fontSize: '10px',
+                                marginLeft: '0px',
+                                marginTop: '5px',
+                                color: appConfig.theme.colors.neutrals[300],
+                            }}
+                            tag="p"
+                        >
+                        
+                            {(new Date(message.created_at).toLocaleDateString()) + ' às ' + new Date(message.created_at).toLocaleTimeString()} {message.updated_at != null ? `- Editado às ${new Date(message.updated_at).toLocaleTimeString()}` : null}
+                        </Text>
                     </Text>
-                            <br />
-                    <Text
-                        styleSheet={{
-                            fontSize: '10px',
-                            marginLeft: '8px',
-                            marginTop: '8px',
-                            color: appConfig.theme.colors.neutrals[300],
-                        }}
-                        tag="span"
-                    >
-                        {(new Date(message.created_at).toLocaleDateString()) + ' às ' + new Date(message.created_at).toLocaleTimeString()} {message.updated_at != null ? `- Editado às ${new Date(message.updated_at).toLocaleTimeString()}` : null}
-                    </Text>
+                    
 
                     
 

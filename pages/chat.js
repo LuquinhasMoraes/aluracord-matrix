@@ -130,11 +130,14 @@ export default function ChatPage(props) {
                     backgroundColor: 'rgba(0,0,0,0.8)',
                     height: '100%',
                     maxWidth: {
-                        sm: '80%',
-                        xs: '90%'
+                        md: '70%',
+                        sm: '95%',
                     },
                     maxHeight: '95vh',
-                    padding: '40px',
+                    padding: {
+                        md: '40px',
+                        sm: '25px',
+                    },
                 }}
             >
                 <Header userLogged={userLogged} />
