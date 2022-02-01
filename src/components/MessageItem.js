@@ -91,8 +91,11 @@ const MessageItem = memo(({supabaseClient, messageItem, userLogged}) => {
                                     .from('messages')
                                     .update({ deleted: true })
                                     .match({ id: message.id }).then(res => {
-                                        if(res.error === null)
+                                        if(res.error === null) {
                                             setMessage(res.data[0])
+                                            const audio = new Audio('./../../sounds/send-trash.mp3')
+                                            audio.play()
+                                        }
                                         else
                                             console.error('Erro ao deletar mensagem: ', error)
                                     })

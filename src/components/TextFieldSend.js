@@ -22,8 +22,8 @@ const TextFieldSend = (props) => {
             .insert([
                 message
             ])
-            .then(( {data})=>{
-                console.log('Criando Mensagem: ', data);
+            .then(({data})=>{
+                console.log('Mensagem enviada')
             })   
         setTextMessage('')
     }

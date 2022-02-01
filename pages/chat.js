@@ -50,6 +50,9 @@ export default function ChatPage(props) {
                         if(newMessage.from !== userLogged) {
                             const audio = new Audio('./sounds/newMessage.mp3')
                             audio.play()
+                        } else {
+                            const audio = new Audio('./../../sounds/send-sticker.mp3')
+                            audio.play()
                         }
                         setMessages((currentMessages) => (
                             [
@@ -75,55 +78,7 @@ export default function ChatPage(props) {
                 }
             })
 
-    }, []);
-
-    function editMessageClient(newMessage, id) {
-        console.log(newMessage, id, messages);
-        const editedMessages = messages.map(m => {
-            if (m.id === id) {
-                return {
-                    ...m,
-                    isEditing: false,
-                    textMessage: newMessage
-                }
-            } else {
-                return {
-                    ...m
-                }
-            }
-        })
-        console.log(editedMessages);
-        setMessages(editedMessages)
-    }
-
-    const editMessage = (newMessage, id) => {
-        supabaseClient
-            .from('messages')
-            .update({ textMessage: newMessage, updated_at: new Date() })
-            .match({ id: id }).then(res => {
-                editMessageClient(newMessage, id)
-            })
-                    
-    }
-
-    const handleOnClickEditMessage = (message) => {
-        const editedMessages = messages.map(m => {
-            if (m.id === message.id) {
-                return {
-                    ...m,
-                    updated_at: new Date(),
-                    isEditing: true
-                }
-            } else {
-                return {
-                    ...m
-                }
-            }
-        })
-        setMessages(editedMessages)
-    }
-
-    
+    }, []); 
 
     const MessageList = ({messages}) => {
         return (
@@ -172,16 +127,18 @@ export default function ChatPage(props) {
                     flex: 1,
                     boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
                     borderRadius: '5px',
-                    backgroundColor: appConfig.theme.colors.transparente.fundo,
+                    backgroundColor: 'rgba(0,0,0,0.8)',
                     height: '100%',
-                    maxWidth: '95%',
+                    maxWidth: {
+                        sm: '80%',
+                        xs: '90%'
+                    },
                     maxHeight: '95vh',
-                    padding: '32px',
+                    padding: '40px',
                 }}
             >
                 <Header userLogged={userLogged} />
-                <Box
-                    styleSheet={{
+                    <Box styleSheet={{
                         position: 'relative',
                         display: 'flex',
                         flex: 1,
@@ -189,12 +146,10 @@ export default function ChatPage(props) {
                         flexDirection: 'column',
                         borderRadius: '5px',
                         padding: '16px',
-                    }}>
-
+                        backgroundColor: 'rgba(71, 4, 147, 0.5)'
+                    }}>    
                     <MessageList messages={messages} />
-
                     <TextFieldSend userLogged={userLogged} supabaseClient={supabaseClient} />
-
                 </Box>
             </Box>
         </Box>
