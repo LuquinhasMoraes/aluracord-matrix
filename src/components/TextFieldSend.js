@@ -45,7 +45,8 @@ const TextFieldSend = (props) => {
                 as="form"
                 styleSheet={{
                     display: 'flex',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    padding: '10px'
                 }}
                 >
                 
