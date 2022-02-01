@@ -21,8 +21,7 @@ const MessageItem = memo(({supabaseClient, messageItem, userLogged}) => {
                 key={message.id}
                 tag="li"
                 styleSheet={{
-                    borderRadius: '5px',
-                    padding: '10px',
+                    padding: '15px',
                     marginBottom: '12px',
                     hover: {
                         backgroundColor: appConfig.theme.colors.transparente.fundo,

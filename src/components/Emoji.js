@@ -23,13 +23,13 @@ export default function Emojis({supabaseClient, message, userLogged}) {
     })
 
     const emojis = {
-        curti: '👍',
+        // curti: '👍',
         amei: '❤️',
         haha: '😄',
-        uau: '😮',
+        // uau: '😮',
         triste: '😢',
         grr: '😡',
-        olha: '👀',
+        // olha: '👀',
     }
 
     const botesEmoji = Object.entries(emojis).map(([nome, emoji]) => {

@@ -134,7 +134,7 @@ export default function ChatPage(props) {
                         sm: '95%',
                         xs: '95%',
                     },
-                    maxHeight: '95vh',
+                    maxHeight: '93vh',
                     padding: {
                         md: '40px',
                         sm: '20px',
@@ -150,7 +150,7 @@ export default function ChatPage(props) {
                         height: '80%',
                         flexDirection: 'column',
                         borderRadius: '5px',
-                        padding: '16px',
+                        padding: '0px',
                         backgroundColor: 'rgba(71, 4, 147, 0.5)'
                     }}>    
                     <MessageList messages={messages} />
