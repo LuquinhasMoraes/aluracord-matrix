@@ -88,24 +88,7 @@ const MessageItem = ({currentView, supabaseClient, message, userLogged}) => {
                                 cursor: 'pointer',
                                 right: '100px'
                             }}
-                            onClick={()=>{
-
-                                message.delete()
-
-                                // supabaseClient
-                                //     .from('messages')
-                                //     .update({ deleted: true })
-                                //     .match({ id: message.id }).then(res => {
-                                //         if(res.error === null) {
-                                //             setMessage(res.data[0])
-                                //             const audio = new Audio('./../../sounds/send-trash.mp3')
-                                //             audio.play()
-                                //         }
-                                //         else
-                                //             console.error('Erro ao deletar mensagem: ', error)
-                                //     })
-                            
-                            }}
+                            onClick={()=>{ message.delete() }}
                         >
                             {<RiDeleteBinLine />}
                         </Box>
@@ -161,18 +144,7 @@ const MessageItem = ({currentView, supabaseClient, message, userLogged}) => {
                             onKeyPress={(event) => {
                                 if(event.key === 'Enter') {
                                     event.preventDefault()
-
-                                    message.update({ textMessage: messageEdit.textMessage, updated_at: new Date() })
-
-                                    // supabaseClient
-                                    // .from('messages')
-                                    // .update({ textMessage: messageEdit, updated_at: new Date() })
-                                    // .match({ id: message.id }).then(res => {
-                                    //     if(res.error === null)
-                                    //         setMessage(res.data[0])
-                                    //     else
-                                    //         console.error('Erro ao editar mensagem: ', error)
-                                    // })
+                                    message.update({ textMessage: messageEdit, updated_at: new Date() })
                                 }
                             }}
                             styleSheet={{

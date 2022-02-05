@@ -1,9 +1,11 @@
 import { Button, Box } from '@skynexui/components'
+import { observer } from 'mobx-react-lite';
 import { useState } from 'react'
 import appConfig from '../../config.json';
 
 
-export default function Emojis({supabaseClient, message, userLogged}) {
+const Emojis = ({supabaseClient, message, userLogged}) => {
+
     const initialStateAmei = message.like.amei.filter(l => l.liked).length
     const initialStateCurti = message.like.curti.filter(l => l.liked).length
     const initialStateHaha = message.like.haha.filter(l => l.liked).length
@@ -62,8 +64,6 @@ export default function Emojis({supabaseClient, message, userLogged}) {
                 label={`${emoji} : ${contador[nome]}`}
                 onClick={(evento) => {
                     evento.preventDefault()
-                    
-
                     if(like === undefined) {
                         likes.push({
                             from: userLogged,
@@ -74,17 +74,9 @@ export default function Emojis({supabaseClient, message, userLogged}) {
                         likes.splice(index, 1)
                     }
                     
-                    supabaseClient
-                    .from('messages')
-                    .update({like: {...message.like, [nome]: likes}})
-                    .match({ id: message.id }).then((event) =>{
-                        contador[nome] = likes.length
-                        message.like = {...message.like, [nome]: likes}
-                        setContador({ ...contador })
-                    })
-                    
-                    
-                    
+                    message.update({like: {...message.like, [nome]: likes}})
+                    contador[nome] = likes.length
+                    setContador({ ...contador }) 
                 }}
             />
         )
@@ -92,3 +84,5 @@ export default function Emojis({supabaseClient, message, userLogged}) {
 
     return <Box>{botesEmoji}</Box>
 }
+
+export default observer(Emojis) 

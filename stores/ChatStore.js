@@ -11,7 +11,11 @@ const Like = types.model({
     triste: types.optional(types.frozen({}), {}),
     grr: types.optional(types.frozen({}), {}),
     olha: types.optional(types.frozen({}), {})
-})
+}).actions(self => ({
+  updateValues(like) {
+    self.amei = like.amei
+  }
+}))
 
 const Message = types.model('Message', {
   id: types.optional(types.maybeNull(types.number), 0),
@@ -21,7 +25,7 @@ const Message = types.model('Message', {
   created_at: types.optional(types.maybeNull(types.string), null),
   updated_at: types.optional(types.maybeNull(types.string), ''),
   deleted: types.optional(types.boolean, false),
-  isEdinting: types.optional(types.boolean, false)
+  isEditing: false
 }).actions(self => ({
   delete: flow( function * () {
     // delete from supabase
@@ -37,26 +41,37 @@ const Message = types.model('Message', {
       }
       else
         console.error('Erro ao deletar mensagem: ', error)
-    
   }),
+  setMessage: (message) => {
+    self.created_at = message.created_at
+    self.from = message.from
+    self.like.updateValues(message.like)
+    self.textMessage = message.textMessage
+    self.updated_at = message.updated_at
+
+    console.log(self);
+  },
   update: flow( function * (dataToUpdate) {
+
     const res = yield supabaseClient
       .from('messages')
       .update(dataToUpdate)
       .match({ id: self.id })
       if(res.error === null) {
-        self.like = res[0].like
-        self.textMessage = res[0].textMessage
-        self.updated_at = res[0].updated_at
+        // console.log(res);
+        // // self.like = res.data[0].like
+        // self.textMessage = res.data[0].textMessage
+        // self.updated_at = res.data[0].updated_at
+        self.isEditing = false
+
+        // console.log(self.like);
       }
       else
         console.error('Erro ao deletar mensagem: ', error)
   }),
   setIsEdinting: (value) => {
-    self.isEdinting = value
+    self.isEditing = value
   } 
-    
-
 }))
 
 export const ChatStore = types.model('ChatStore', {
@@ -81,5 +96,9 @@ export const ChatStore = types.model('ChatStore', {
       newMessage,
       ...self.messages
     ]
+  }
+})).views(self => ({
+  getMessageById(id) {
+    return self.messages.find(msg => msg.id === id)
   }
 }))

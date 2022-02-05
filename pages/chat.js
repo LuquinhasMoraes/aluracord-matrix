@@ -56,19 +56,9 @@ const ChatPage = observer((props) => {
                         currentView.addMessage(newMessage)
                         break;
                     case 'UPDATE':
-                            console.log('Updateing');
-                            setMessages((currentMessages) => (
-                                [
-                                    ...currentMessages.map(m => {
-                                        console.log(m);
-                                        return {
-                                            id: m.id === newMessage.id ? newMessage.id : m.id,
-                                            textMessage: m.id === newMessage.id ? newMessage.textMessage : m.textMessage,
-                                            like: m.id === newMessage.id ? newMessage.like : m.like
-                                        }
-                                    })
-                                ]
-                            ))
+                            const message = currentView.getMessageById(newMessage.id)
+                            console.log(message);
+                            message.setMessage(newMessage)
                         break;                
                     default:
                         break;
