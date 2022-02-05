@@ -7,10 +7,12 @@ import { BsFillReplyFill } from 'react-icons/bs';
 import { RiDeleteBinLine } from 'react-icons/ri';
 
 import Emojis from './Emoji';
+import { observer } from "mobx-react-lite";
 
-const MessageItem = memo(({supabaseClient, messageItem, userLogged}) => {
+const MessageItem = ({currentView, supabaseClient, message, userLogged}) => {
+
     const [textMessage, setTextMessage] = useState()
-    const [message, setMessage] = useState(messageItem)
+    // const [message, setMessage] = useState(messageItem)
     const [messageEdit, setMessageEdit] = useState()
     
     if(message.deleted) return (null)
@@ -88,18 +90,20 @@ const MessageItem = memo(({supabaseClient, messageItem, userLogged}) => {
                             }}
                             onClick={()=>{
 
-                                supabaseClient
-                                    .from('messages')
-                                    .update({ deleted: true })
-                                    .match({ id: message.id }).then(res => {
-                                        if(res.error === null) {
-                                            setMessage(res.data[0])
-                                            const audio = new Audio('./../../sounds/send-trash.mp3')
-                                            audio.play()
-                                        }
-                                        else
-                                            console.error('Erro ao deletar mensagem: ', error)
-                                    })
+                                message.delete()
+
+                                // supabaseClient
+                                //     .from('messages')
+                                //     .update({ deleted: true })
+                                //     .match({ id: message.id }).then(res => {
+                                //         if(res.error === null) {
+                                //             setMessage(res.data[0])
+                                //             const audio = new Audio('./../../sounds/send-trash.mp3')
+                                //             audio.play()
+                                //         }
+                                //         else
+                                //             console.error('Erro ao deletar mensagem: ', error)
+                                //     })
                             
                             }}
                         >
@@ -115,7 +119,7 @@ const MessageItem = memo(({supabaseClient, messageItem, userLogged}) => {
                             }}
                             onClick={()=>{
                                 setMessageEdit(message.textMessage)
-                                setMessage((msg) => ({...msg, isEditing: true}))
+                                message.setIsEdinting(true)
                                 // handleOnClickEditMessage(message)
                             }}
                         >
@@ -157,15 +161,18 @@ const MessageItem = memo(({supabaseClient, messageItem, userLogged}) => {
                             onKeyPress={(event) => {
                                 if(event.key === 'Enter') {
                                     event.preventDefault()
-                                    supabaseClient
-                                    .from('messages')
-                                    .update({ textMessage: messageEdit, updated_at: new Date() })
-                                    .match({ id: message.id }).then(res => {
-                                        if(res.error === null)
-                                            setMessage(res.data[0])
-                                        else
-                                            console.error('Erro ao editar mensagem: ', error)
-                                    })
+
+                                    message.update({ textMessage: messageEdit.textMessage, updated_at: new Date() })
+
+                                    // supabaseClient
+                                    // .from('messages')
+                                    // .update({ textMessage: messageEdit, updated_at: new Date() })
+                                    // .match({ id: message.id }).then(res => {
+                                    //     if(res.error === null)
+                                    //         setMessage(res.data[0])
+                                    //     else
+                                    //         console.error('Erro ao editar mensagem: ', error)
+                                    // })
                                 }
                             }}
                             styleSheet={{
@@ -201,6 +208,6 @@ const MessageItem = memo(({supabaseClient, messageItem, userLogged}) => {
             
         </>
     )
-})
+}
 
-export default MessageItem
+export default observer(MessageItem)

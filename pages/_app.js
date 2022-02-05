@@ -1,3 +1,5 @@
+import { StoreProvider } from "../src/components/StoreProvider";
+
 function GlobalStyle() {
     return (
       <style global jsx>{`
@@ -76,11 +78,13 @@ function GlobalStyle() {
     );
 }
 
-export default function CustomApp({ Component, pageProps }) {
+export default function CustomApp({ Component, pageProps, router }) {
     return (
         <>
             <GlobalStyle/>
-            <Component {...pageProps} />   
+            <StoreProvider {...pageProps} router={router} >
+              <Component {...pageProps} />   
+            </StoreProvider>
         </>
     )
 }

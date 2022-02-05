@@ -16,18 +16,6 @@ const TextFieldSend = (props) => {
         return message
     }
 
-    function sendMessage(message) {
-        props.supabaseClient
-            .from('messages')
-            .insert([
-                message
-            ])
-            .then(({data})=>{
-                console.log('Mensagem enviada')
-            })   
-        setTextMessage('')
-    }
-
     return (
 
         <>
@@ -60,7 +48,8 @@ const TextFieldSend = (props) => {
                     onKeyPress={(event) => {
                         if(event.key === 'Enter') {
                             event.preventDefault()
-                            sendMessage(createMessage(textMessage))
+                            props.currentView.sendMessage(createMessage(textMessage))
+                            setTextMessage('')
                         }
                     }}
                     styleSheet={{
@@ -84,7 +73,7 @@ const TextFieldSend = (props) => {
 
                 <ButtonSendSticker 
                     onStickerClick={(sticker) => {
-                        sendMessage(createMessage(':sticker: ' + sticker))
+                        props.currentView.sendMessage(createMessage(':sticker: ' + sticker))
                     }}
                     />
 
@@ -115,6 +104,7 @@ const TextFieldSend = (props) => {
                         if (textMessage.length > 0) {
                             event.preventDefault()
                             sendMessage(createMessage(textMessage))
+                            setTextMessage('')
                         }
                     }}
                     />

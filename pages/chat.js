@@ -12,6 +12,11 @@ import { ButtonSendSticker } from '../src/components/ButtonSendSticker';
 import Emojis from '../src/components/Emoji';
 import MessageItem from '../src/components/MessageItem';
 import TextFieldSend from '../src/components/TextFieldSend';
+import { ChatStore } from '../stores/ChatStore';
+import { getSnapshot } from 'mobx-state-tree';
+import { initializeStore } from '../stores/store';
+import { useStore } from '../src/components/StoreProvider';
+import { observer } from 'mobx-react-lite';
 
 const supabaseClient = createClient('https://bfomzoczejfqvfooluii.supabase.co', process.env.PRIVATE_KEY)
 
@@ -24,23 +29,17 @@ function editRealtimeMessage(updateInRealTime) {
             console.log(event);
         })
 }
-
-export default function ChatPage(props) {
+const ChatPage = observer((props) => {
 
     const [messages, setMessages] = useState([])
     const route = useRouter()
     const userLogged = route.query.user
 
-    useEffect(()=>{
+    const { currentView } = useStore(props.initialSnapshot)
+    
+    useEffect(async ()=>{
 
-        supabaseClient
-            .from('messages')
-            .select('*')
-            .match({deleted: false})
-            .order('id', { ascending: false})
-            .then(( {data})=>{
-                setMessages(data)
-            });
+        await currentView.getMessages()
 
             editRealtimeMessage((payload) => {
                 console.log(payload)
@@ -54,24 +53,22 @@ export default function ChatPage(props) {
                             const audio = new Audio('./../../sounds/send-sticker.mp3')
                             audio.play()
                         }
-                        setMessages((currentMessages) => (
-                            [
-                                newMessage,
-                                ...currentMessages
-                            ]
-                        ))
+                        currentView.addMessage(newMessage)
                         break;
                     case 'UPDATE':
-                            // setMessages((currentMessages) => (
-                            //     [
-                            //         ...currentMessages.map(m => {
-                            //             return {
-                            //                 ...m,
-                            //                 textMessage: m.id === newMessage.id ? newMessage.textMessage : m.textMessage
-                            //             }
-                            //         })
-                            //     ]
-                            // ))
+                            console.log('Updateing');
+                            setMessages((currentMessages) => (
+                                [
+                                    ...currentMessages.map(m => {
+                                        console.log(m);
+                                        return {
+                                            id: m.id === newMessage.id ? newMessage.id : m.id,
+                                            textMessage: m.id === newMessage.id ? newMessage.textMessage : m.textMessage,
+                                            like: m.id === newMessage.id ? newMessage.like : m.like
+                                        }
+                                    })
+                                ]
+                            ))
                         break;                
                     default:
                         break;
@@ -79,37 +76,6 @@ export default function ChatPage(props) {
             })
 
     }, []); 
-
-    const MessageList = ({messages}) => {
-        return (
-            <Box
-                tag="ul"
-                id="main-box"
-                styleSheet={{
-                    overflowY: 'scroll',
-                    wordBreak: 'break-word',
-                    display: 'flex',
-                    flexDirection: 'column-reverse',
-                    flex: 1,
-                    color: appConfig.theme.colors.neutrals["000"],
-                    marginBottom: '1px'
-                }}
-            >
-    
-                {
-                    messages.filter(message => !message.deleted).map((message) => {
-                        return (
-                            <MessageItem 
-                                key={message.id}
-                                supabaseClient={supabaseClient} 
-                                messageItem={message} 
-                                userLogged={userLogged} />
-                        )
-                    })
-                }
-            </Box>
-        )
-    }
 
     return (
         <Box
@@ -153,8 +119,36 @@ export default function ChatPage(props) {
                         padding: '0px',
                         backgroundColor: 'rgba(71, 4, 147, 0.5)'
                     }}>    
-                    <MessageList messages={messages} />
-                    <TextFieldSend userLogged={userLogged} supabaseClient={supabaseClient} />
+                    
+                    <Box
+                        tag="ul"
+                        id="main-box"
+                        styleSheet={{
+                            overflowY: 'scroll',
+                            wordBreak: 'break-word',
+                            display: 'flex',
+                            flexDirection: 'column-reverse',
+                            flex: 1,
+                            color: appConfig.theme.colors.neutrals["000"],
+                            marginBottom: '1px'
+                        }}
+                    >
+
+                        {
+                            currentView.messages.filter(message => !message.deleted).map((message) => {
+                                return (
+                                    <MessageItem
+                                        currentView={currentView} 
+                                        key={message.id}
+                                        supabaseClient={supabaseClient} 
+                                        message={message} 
+                                        userLogged={userLogged} />
+                                )
+                            })
+                        }
+                    </Box>
+                    
+                    <TextFieldSend currentView={currentView} userLogged={userLogged} supabaseClient={supabaseClient} />
                 </Box>
             </Box>
         </Box>
@@ -189,11 +183,18 @@ export default function ChatPage(props) {
             </>
         )
     }
-}
+})
+
+export default ChatPage
 
 export async function getServerSideProps(context) {
+    const store = initializeStore()
+    const view = ChatStore.create()
+    store.setCurrentView(view)
+    console.log(store)
     return {
         props: {
+            initialSnapshot: getSnapshot(store),
             SUPABASE_KEY: process.env.SUPABASE_KEY,
             SUPABASE_HOST: process.env.SUPABASE_HOST,
         }
