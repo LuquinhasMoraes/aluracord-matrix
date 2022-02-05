@@ -24,7 +24,7 @@ const Message = types.model('Message', {
   isEdinting: types.optional(types.boolean, false)
 }).actions(self => ({
   delete: flow( function * () {
-
+    // delete from supabase
     const res = yield supabaseClient
       .from('messages')
       .update({ deleted: true })
