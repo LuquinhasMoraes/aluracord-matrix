@@ -54,6 +54,7 @@ const Message = types.model('Message', {
     self.like.updateValues(message.like)
     self.textMessage = message.textMessage
     self.updated_at = message.updated_at
+    self.deleted = message.deleted
 
     console.log(self);
   },
