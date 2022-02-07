@@ -55,8 +55,6 @@ const Message = types.model('Message', {
     self.textMessage = message.textMessage
     self.updated_at = message.updated_at
     self.deleted = message.deleted
-
-    console.log(self);
   },
   update: flow( function * (dataToUpdate) {
 
@@ -65,13 +63,7 @@ const Message = types.model('Message', {
       .update(dataToUpdate)
       .match({ id: self.id })
       if(res.error === null) {
-        // console.log(res);
-        // // self.like = res.data[0].like
-        // self.textMessage = res.data[0].textMessage
-        // self.updated_at = res.data[0].updated_at
         self.isEditing = false
-
-        // console.log(self.like);
       }
       else
         console.error('Erro ao deletar mensagem: ', error)
