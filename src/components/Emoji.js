@@ -61,7 +61,7 @@ const Emojis = ({supabaseClient, message, userLogged}) => {
                         color: 'white',
                     }
                 }}
-                label={`${emoji} : ${contador[nome]}`}
+                label={`${emoji} : ${message.like[nome].length}`}
                 onClick={(evento) => {
                     evento.preventDefault()
                     if(like === undefined) {

@@ -13,7 +13,13 @@ const Like = types.model({
     olha: types.optional(types.frozen({}), {})
 }).actions(self => ({
   updateValues(like) {
+    self.curti = like.curti
     self.amei = like.amei
+    self.haha = like.haha
+    self.uau = like.uau
+    self.triste = like.triste
+    self.grr = like.grr
+    self.olha = like.olha
   }
 }))
 
