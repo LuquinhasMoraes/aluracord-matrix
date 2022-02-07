@@ -6,4 +6,4 @@
 ![Home](https://github.com/LuquinhasMoraes/aluracord-matrix/blob/main/public/img/1.png)
 
 # Chat 
-![Chat](https://github.com/LuquinhasMoraes/aluracord-matrix/blob/main/public/img/2.png)
+![Chat](https://github.com/LuquinhasMoraes/aluracord-matrix/blob/main/public/img/3.png)
