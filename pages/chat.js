@@ -39,31 +39,33 @@ const ChatPage = observer((props) => {
     
     useEffect(async ()=>{
 
-        await currentView.getMessages()
+        let teste = await currentView.getMessages()
 
-            editRealtimeMessage((payload) => {
-                console.log(payload)
-                const newMessage = payload.new
-                switch (payload.eventType) {
-                    case 'INSERT':
-                        if(newMessage.from !== userLogged) {
-                            const audio = new Audio('./sounds/newMessage.mp3')
-                            audio.play()
-                        } else {
-                            const audio = new Audio('./../../sounds/send-sticker.mp3')
-                            audio.play()
-                        }
-                        currentView.addMessage(newMessage)
-                        break;
-                    case 'UPDATE':
-                            const message = currentView.getMessageById(newMessage.id)
-                            console.log(message);
-                            message.setMessage(newMessage)
-                        break;                
-                    default:
-                        break;
-                }
-            })
+        console.log(teste);
+
+        editRealtimeMessage((payload) => {
+            console.log(payload)
+            const newMessage = payload.new
+            switch (payload.eventType) {
+                case 'INSERT':
+                    if(newMessage.from !== userLogged) {
+                        const audio = new Audio('./sounds/newMessage.mp3')
+                        audio.play()
+                    } else {
+                        const audio = new Audio('./../../sounds/send-sticker.mp3')
+                        audio.play()
+                    }
+                    currentView.addMessage(newMessage)
+                    break;
+                case 'UPDATE':
+                        const message = currentView.getMessageById(newMessage.id)
+                        console.log(message);
+                        message.setMessage(newMessage)
+                    break;                
+                default:
+                    break;
+            }
+        })
 
     }, []); 
 

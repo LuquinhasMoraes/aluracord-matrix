@@ -14,6 +14,8 @@ const Emojis = ({supabaseClient, message, userLogged}) => {
     const initialStateGrr = message.like.grr.filter(l => l.liked).length
     const initialStateOlha = message.like.olha.filter(l => l.liked).length
 
+    console.log(initialStateAmei);
+
     const [contador, setContador] = useState({ 
         curti: initialStateCurti, 
         amei: initialStateAmei, 

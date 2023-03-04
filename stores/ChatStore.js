@@ -77,11 +77,14 @@ export const ChatStore = types.model('ChatStore', {
   messages: types.optional(types.array(Message), []),
 }).actions(self => ({
   getMessages: flow(function *  () {
+    
     const response = yield supabaseClient
       .from('messages')
       .select('*')
       .match({deleted: false})
       .order('id', { ascending: false})
+
+    console.log('messages', response);
 
     self.messages = response.data
 

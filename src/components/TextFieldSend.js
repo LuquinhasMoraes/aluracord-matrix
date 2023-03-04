@@ -11,6 +11,16 @@ const TextFieldSend = (props) => {
         const message = {
             from: props.userLogged, 
             textMessage: textMessage,
+            deleted: false,
+            like: {
+                amei: [],
+                curti: [],
+                haha: [],
+                uau: [],
+                triste: [],
+                grr: [],
+                olha: []
+            },
             updated_at: null
         }
         return message
